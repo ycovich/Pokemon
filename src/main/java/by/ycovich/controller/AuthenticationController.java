@@ -1,11 +1,13 @@
 package by.ycovich.controller;
 
+import by.ycovich.dto.AuthResponseDTO;
 import by.ycovich.dto.LoginDTO;
 import by.ycovich.dto.RegisterDTO;
 import by.ycovich.model.Role;
 import by.ycovich.model.UserEntity;
 import by.ycovich.repository.RoleRepository;
 import by.ycovich.repository.UserRepository;
+import by.ycovich.security.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,15 +30,17 @@ public class AuthenticationController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtGenerator jwtGenerator;
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
                                     UserRepository userRepository,
                                     RoleRepository roleRepository,
-                                    PasswordEncoder passwordEncoder) {
+                                    PasswordEncoder passwordEncoder, JwtGenerator jwtGenerator) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtGenerator = jwtGenerator;
     }
 
 
@@ -64,16 +68,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO){
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         loginDTO.getUsername(),
                         loginDTO.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity
-                .ok()
+        String token = jwtGenerator.generateToken(authentication);
+        return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body("login success");
+                .body(new AuthResponseDTO(token));
     }
 
 
