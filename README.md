@@ -1,5 +1,6 @@
-Pokemon review service RESTful API
+# Pokemon Review Service RESTful API
 
-Spring [Boot, Data JPA, Security (JWT)]
-PostgreSQL
+
+Spring Boot, Spring Data JPA, Spring Security (using JWT-tokens)<br>
+PostgreSQL<br>
 Maven
