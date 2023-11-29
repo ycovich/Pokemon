@@ -8,7 +8,10 @@ import by.ycovich.model.UserEntity;
 import by.ycovich.repository.RoleRepository;
 import by.ycovich.repository.UserRepository;
 import by.ycovich.security.JwtGenerator;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,10 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 
@@ -80,5 +81,13 @@ public class AuthenticationController {
                 .body(new AuthResponseDTO(token));
     }
 
+    @GetMapping("/logout")
+    public ResponseEntity<String> logout(){
+        SecurityContextHolder.clearContext();
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body("successful logout");
+    }
 
 }
